@@ -105,17 +105,6 @@ python app.py --image input.jpg --output outputs/result.png
 - `opencv`
 - `gesture-recognition`
 
-## Suggested Commit Split
-
-如果你想增加合理的 commit 數量，可以拆成這幾次：
-
-1. `feat: add MediaPipe hand tracking project skeleton`
-2. `feat: add finger state analysis and bounding box overlay`
-3. `feat: add basic gesture recognition`
-4. `feat: add screenshot capture support`
-5. `feat: add single image inference mode`
-6. `docs: improve README and project usage instructions`
-
 ## Next Steps
 
 - 加入更多手勢，例如 `OK`、`Rock`、`Call Me`
