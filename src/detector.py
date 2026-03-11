@@ -4,6 +4,7 @@ import cv2
 import mediapipe as mp
 
 from src.finger_state import evaluate_fingers
+from src.gesture_recognition import classify_gesture
 from src.models import HandDetection, Landmark
 
 
@@ -47,6 +48,11 @@ class HandDetector:
                 frame_height=height,
             )
             bbox = _compute_bounding_box(landmarks)
+            fingers_extended = evaluate_fingers(
+                landmarks=landmarks,
+                normalized_landmarks=normalized_landmarks,
+                handedness_label=label,
+            )
 
             detections.append(
                 HandDetection(
@@ -56,10 +62,10 @@ class HandDetector:
                     normalized_landmarks=normalized_landmarks,
                     handedness_index=index,
                     bbox=bbox,
-                    fingers_extended=evaluate_fingers(
+                    fingers_extended=fingers_extended,
+                    gesture_name=classify_gesture(
                         landmarks=landmarks,
-                        normalized_landmarks=normalized_landmarks,
-                        handedness_label=label,
+                        fingers_extended=fingers_extended,
                     ),
                 )
             )

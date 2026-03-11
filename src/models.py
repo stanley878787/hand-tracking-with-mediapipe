@@ -19,3 +19,4 @@ class HandDetection:
     handedness_index: int
     bbox: tuple[int, int, int, int]
     fingers_extended: dict[str, bool]
+    gesture_name: str

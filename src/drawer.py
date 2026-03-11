@@ -40,7 +40,7 @@ def draw_status_bar(
 ) -> None:
     text = (
         f"Camera: {camera_index} | Hands: {hand_count} | "
-        f"Mirror: {'On' if mirror_enabled else 'Off'} | Exit: Q / Esc"
+        f"Mirror: {'On' if mirror_enabled else 'Off'} | Screenshot: S | Exit: Q / Esc"
     )
     height = frame.shape[0]
     cv2.rectangle(frame, (0, height - 32), (frame.shape[1], height), (20, 20, 20), -1)
@@ -80,7 +80,7 @@ def _draw_landmarks(frame, landmarks) -> None:
 def _draw_hand_label(frame, detection: HandDetection) -> None:
     x1, y1, _, _ = detection.bbox
     anchor = (x1, max(y1 - 12, 20))
-    text = f"{detection.label} ({detection.score:.2f})"
+    text = f"{detection.label} | {detection.gesture_name} ({detection.score:.2f})"
 
     cv2.putText(
         frame,

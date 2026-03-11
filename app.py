@@ -7,6 +7,7 @@ import cv2
 
 from src.detector import HandDetector
 from src.drawer import draw_detection_result, draw_fps, draw_status_bar
+from src.utils import save_frame
 
 
 def parse_args() -> argparse.Namespace:
@@ -89,6 +90,9 @@ def main() -> None:
             cv2.imshow(window_name, annotated)
 
             key = cv2.waitKey(1) & 0xFF
+            if key == ord("s"):
+                saved_path = save_frame(annotated)
+                print(f"Saved screenshot: {saved_path}")
             if key in (27, ord("q")):
                 break
     finally:
