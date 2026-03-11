@@ -1,15 +1,16 @@
 # MediaPipe Hand Tracking AI Project
 
-這是一個使用 `Python + OpenCV + MediaPipe` 建立的即時手部關鍵點偵測專案。  
-專案聚焦在手部追蹤與基礎手勢分析，適合用來展示 AI / Computer Vision repo 的完整度。
+使用 `Python + OpenCV + MediaPipe` 建立的即時手部關鍵點偵測專案。
 
-目前已完成的功能：
+這個專案可以作為 AI / Computer Vision 課程或 GitHub 作品集的基礎專案，核心功能包含：
 
 - 開啟攝影機並即時讀取畫面
 - 偵測單手或雙手
 - 繪製 21 個手部關鍵點與骨架連線
 - 顯示左右手分類與信心分數
 - 判斷五根手指是否伸直
+- 顯示基礎手勢名稱
+- 按 `S` 儲存目前畫面截圖
 - 顯示 FPS、相機編號與鏡像狀態
 
 ## Features
@@ -18,7 +19,9 @@
 - 21 landmarks per detected hand
 - Left / Right hand classification
 - Finger state analysis for thumb, index, middle, ring, and pinky
+- Basic gesture recognition: `Open Palm`, `Fist`, `Thumbs Up`, `Pointing Up`, `Victory`
 - Bounding box, FPS, and runtime status overlay
+- Screenshot capture to local files
 - Command-line arguments for camera and confidence settings
 
 ## Tech Stack
@@ -40,7 +43,9 @@ hand-tracking-with-mediapipe/
 │  ├─ detector.py
 │  ├─ drawer.py
 │  ├─ finger_state.py
-│  └─ models.py
+│  ├─ gesture_recognition.py
+│  ├─ models.py
+│  └─ utils.py
 └─ .gitignore
 ```
 
@@ -61,25 +66,37 @@ python app.py --min-detection-confidence 0.7 --min-tracking-confidence 0.6
 python app.py --no-flip
 ```
 
-按 `q` 或 `Esc` 可結束程式。
+快捷鍵：
+
+- `q` 或 `Esc`: 結束程式
+- `s`: 將目前畫面儲存到 `captures/`
 
 ## Implementation Overview
 
-1. app.py 負責相機初始化、參數處理、主迴圈與畫面顯示。
-2. src/models.py 定義 landmark 與 detection 資料結構。
-3. src/detector.py 封裝 MediaPipe Hands，輸出 landmarks、邊界框、左右手結果與手指狀態。
-4. src/drawer.py 負責畫出骨架、標籤、手指狀態與底部狀態列。
-5. src/finger_state.py 使用關節角度與相對位置判斷五根手指是否伸直。
+1. [app.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/app.py)
+   負責相機初始化、命令列參數、主迴圈與畫面顯示。
+2. [src/models.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/models.py)
+   定義 landmark 與 detection 的資料結構。
+3. [src/detector.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/detector.py)
+   封裝 MediaPipe Hands，輸出 landmarks、bounding box、左右手結果與手指狀態。
+4. [src/finger_state.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/finger_state.py)
+   使用關節角度與相對位置判斷五根手指是否伸直。
+5. [src/gesture_recognition.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/gesture_recognition.py)
+   根據 landmarks 與手指狀態輸出基礎手勢名稱。
+6. [src/drawer.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/drawer.py)
+   負責畫出骨架、標籤、手勢名稱、手指狀態與底部狀態列。
+7. [src/utils.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/utils.py)
+   負責截圖儲存等通用工具。
 
 ## Finger State Logic
 
 - 食指、中指、無名指、小指：
-  - 使用 `MCP-PIP-DIP` 的關節角度判斷是否接近伸直。
-  - 再搭配 fingertip 與 PIP、wrist 的相對位置做過濾，降低誤判。
+  - 使用 `MCP-PIP-DIP` 關節角度判斷是否接近伸直。
+  - 搭配 fingertip、PIP、wrist 的相對位置做額外過濾，降低誤判。
 - 拇指：
   - 使用拇指關節角度。
-  - 搭配左右手方向做水平延伸判斷。
-  - 再加上與食指根部的相對高度，避免拇指貼在掌心時被誤判為伸直。
+  - 搭配左右手方向判斷水平伸出方向。
+  - 再使用與食指根部的相對高度，避免拇指收進掌心時誤判。
 
 ## Suggested GitHub Topics
 
@@ -90,9 +107,19 @@ python app.py --no-flip
 - `opencv`
 - `gesture-recognition`
 
+## Suggested Commit Split
+
+如果你想增加合理的 commit 數量，可以拆成這幾次：
+
+1. `feat: add MediaPipe hand tracking project skeleton`
+2. `feat: add finger state analysis and bounding box overlay`
+3. `feat: add basic gesture recognition`
+4. `feat: add screenshot capture support`
+5. `docs: improve README and project usage instructions`
+
 ## Next Steps
 
-- 加入手勢辨識，例如 OK、讚、五指張開
-- 支援截圖、錄影或輸出影片檔
+- 加入更多手勢，例如 `OK`、`Rock`、`Call Me`
+- 支援錄影或輸出影片檔
 - 新增圖片輸入模式與批次推論
 - 補上單元測試與範例資料
