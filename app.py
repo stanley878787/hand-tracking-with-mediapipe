@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import time
+from pathlib import Path
 
 import cv2
 
@@ -41,23 +42,43 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Disable horizontal mirror effect.",
     )
+    parser.add_argument(
+        "--image",
+        type=str,
+        help="Run inference on a single image instead of webcam.",
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        help="Output image path for --image mode. Default: outputs/<input_name>_result.png",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    cap = cv2.VideoCapture(args.camera)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
-    if not cap.isOpened():
-        raise RuntimeError(f"Cannot open camera {args.camera}.")
-
     detector = HandDetector(
         max_num_hands=args.max_hands,
         min_detection_confidence=args.min_detection_confidence,
         min_tracking_confidence=args.min_tracking_confidence,
     )
+
+    try:
+        if args.image:
+            run_image_mode(detector, args.image, args.output)
+        else:
+            run_camera_mode(detector, args)
+    finally:
+        detector.close()
+
+
+def run_camera_mode(detector: HandDetector, args: argparse.Namespace) -> None:
+    cap = cv2.VideoCapture(args.camera)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
+    if not cap.isOpened():
+        raise RuntimeError(f"Cannot open camera {args.camera}.")
 
     window_name = "MediaPipe Hand Tracking"
     prev_time = time.time()
@@ -96,9 +117,42 @@ def main() -> None:
             if key in (27, ord("q")):
                 break
     finally:
-        detector.close()
         cap.release()
         cv2.destroyAllWindows()
+
+
+def run_image_mode(
+    detector: HandDetector,
+    image_path: str,
+    output_path: str | None,
+) -> None:
+    image = cv2.imread(image_path)
+    if image is None:
+        raise FileNotFoundError(f"Cannot read image: {image_path}")
+
+    detections = detector.detect(image)
+    annotated = draw_detection_result(image, detections)
+
+    resolved_output = _resolve_output_path(image_path, output_path)
+    resolved_output.parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(resolved_output), annotated)
+
+    print(f"Detections: {len(detections)}")
+    for index, detection in enumerate(detections, start=1):
+        print(
+            f"[{index}] {detection.label} | "
+            f"gesture={detection.gesture_name} | "
+            f"fingers={detection.fingers_extended}"
+        )
+    print(f"Saved result image: {resolved_output}")
+
+
+def _resolve_output_path(image_path: str, output_path: str | None) -> Path:
+    if output_path:
+        return Path(output_path)
+
+    source = Path(image_path)
+    return Path("outputs") / f"{source.stem}_result{source.suffix or '.png'}"
 
 
 if __name__ == "__main__":

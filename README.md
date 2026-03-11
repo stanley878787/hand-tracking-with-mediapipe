@@ -22,6 +22,7 @@
 - Basic gesture recognition: `Open Palm`, `Fist`, `Thumbs Up`, `Pointing Up`, `Victory`
 - Bounding box, FPS, and runtime status overlay
 - Screenshot capture to local files
+- Single-image inference mode with saved output image
 - Command-line arguments for camera and confidence settings
 
 ## Tech Stack
@@ -38,6 +39,7 @@ hand-tracking-with-mediapipe/
 ├─ app.py
 ├─ requirements.txt
 ├─ README.md
+├─ outputs/
 ├─ src/
 │  ├─ __init__.py
 │  ├─ detector.py
@@ -70,6 +72,19 @@ python app.py --no-flip
 
 - `q` 或 `Esc`: 結束程式
 - `s`: 將目前畫面儲存到 `captures/`
+
+單張圖片模式：
+
+```bash
+python app.py --image input.jpg
+python app.py --image input.jpg --output outputs/result.png
+```
+
+執行後會：
+
+- 在終端顯示偵測到的手數量
+- 列出每隻手的左右手、手勢名稱、五指狀態
+- 將標註後的圖片輸出到 `outputs/`
 
 ## Implementation Overview
 
@@ -115,11 +130,12 @@ python app.py --no-flip
 2. `feat: add finger state analysis and bounding box overlay`
 3. `feat: add basic gesture recognition`
 4. `feat: add screenshot capture support`
-5. `docs: improve README and project usage instructions`
+5. `feat: add single image inference mode`
+6. `docs: improve README and project usage instructions`
 
 ## Next Steps
 
 - 加入更多手勢，例如 `OK`、`Rock`、`Call Me`
 - 支援錄影或輸出影片檔
-- 新增圖片輸入模式與批次推論
+- 新增批次推論
 - 補上單元測試與範例資料
