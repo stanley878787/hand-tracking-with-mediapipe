@@ -2,7 +2,7 @@
 
 使用 `Python + OpenCV + MediaPipe` 建立的即時手部關鍵點偵測專案。
 
-這個專案可以作為 AI / Computer Vision 課程或 GitHub 作品集的基礎專案，核心功能包含：
+核心功能包含：
 
 - 開啟攝影機並即時讀取畫面
 - 偵測單手或雙手
@@ -85,23 +85,6 @@ python app.py --image input.jpg --output outputs/result.png
 - 在終端顯示偵測到的手數量
 - 列出每隻手的左右手、手勢名稱、五指狀態
 - 將標註後的圖片輸出到 `outputs/`
-
-## Implementation Overview
-
-1. [app.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/app.py)
-   負責相機初始化、命令列參數、主迴圈與畫面顯示。
-2. [src/models.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/models.py)
-   定義 landmark 與 detection 的資料結構。
-3. [src/detector.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/detector.py)
-   封裝 MediaPipe Hands，輸出 landmarks、bounding box、左右手結果與手指狀態。
-4. [src/finger_state.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/finger_state.py)
-   使用關節角度與相對位置判斷五根手指是否伸直。
-5. [src/gesture_recognition.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/gesture_recognition.py)
-   根據 landmarks 與手指狀態輸出基礎手勢名稱。
-6. [src/drawer.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/drawer.py)
-   負責畫出骨架、標籤、手勢名稱、手指狀態與底部狀態列。
-7. [src/utils.py](/c:/Users/User/Desktop/nkust/project/hand-tracking-with-mediapipe/src/utils.py)
-   負責截圖儲存等通用工具。
 
 ## Finger State Logic
 
